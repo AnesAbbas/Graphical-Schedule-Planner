@@ -1,0 +1,646 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=0.7">
+<meta charset="UTF-8">
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+<title>Schedule Planner</title>
+
+</head>
+
+<body>
+
+<!-- Application Begin -->
+<div ng-app="myApp"  ng-cloak ng-controller="DashCtrl">
+
+<style type="text/css">
+.myButton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6));
+	background:-moz-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+	background:-webkit-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+	background:-o-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+	background:-ms-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0);
+	background-color:#ffffff;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#666666;
+	font-family:Arial;
+	font-size:14px;
+	font-weight:bold;
+	padding:3px 15px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+.myButton:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
+	background:-moz-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+	background:-webkit-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+	background:-o-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+	background:-ms-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
+	background-color:#f6f6f6;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+
+body{margin:0px;}
+
+
+</style>
+
+
+<!-- Header Begin -->
+<div class="list list-inset" style="padding:13px;margin:0px;">
+<!-- Uni Logo -->
+<img width="35" style="vertical-align:middle"  src="
+data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAADsQAAA7EB9YPtSQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAABr0SURBVHic7Z15dBzVmeh/t6p6Vau1WV7xgg022IBNgIxZMpg9yWPfJiHJeRMm7yWPQMhkzgtkm8lkI8PJI5AAw04ABwgBEtYQ4owJEGMcm8XGYIw3YUuytm6pW71VddV9f7QXdVdVb5YsMd2/c/oc6Xb1d79b96u7fvcrwTjzYY/5lVRG/ptpysmmiaJpIqV5+LMWVL9waIsYHG/9yqGjJ/P5jK7ekM1a001TKKomMl5NvoqmXXHYVNE73voVQ4xn5v3D5rcMU/44EpHCMvO/0zSRCPjVo+dMFdvHR7vy6E+YV2VN+YtIBNXMyrzvVJVMoEFbeuhk8dY4qVeScTOAvkT2POBpAD0DkYi0XeP10r1glmf6wdatXHpTxieEJV4ClKwBAwMSWVAMj4ehI2Z7msdDv3JQxjHv7+79w+vLfQrRdaZ90J259GAqVQmKJb7DnnuoecDnUAbDoGn7bvNrB1m1shkXA+jrk43ACSPTvF7na4WlXHEQVKoYKaUiYdnINI9LGbKGdclBUKkqxsUArEbaKeh+VBdNLMnUg6BSxQwOEgbynnlNdetRlUljr1F1jFcXUP7YQ47vQNUNIex62Ucxe9KFNSHLAOM7BqgzAdDKvVCeedksTLEUKaeB8B9Ipvp1P2iL/eQ7ZV3riQxMl8suv+5A8hsLrK9cE4jce3NZ12rx4bZKypBN0WDEZYsRkXOkhbrvC1V0CVWsD2u9d4kdL6Ur19pBt1IXyNMvPRsp/h2TpSD3NN5ujV15qH19ZV+rRSOzEPKnB5ThGCASw2Vfq8RikyspgxbMffxtglQ3JDoklgG5+y7JaJNujrZf+povrH0muPXRnZVrP0I3ty/kZZep8vRLf4oUfwSWHkgmdapDaBCcCW1/J/COWEmwsohMHycldma3Dx1y+ecPJA/3McCAuAMpJlzTW4soHmheLPCE89NNHTXdbT4Ym3npBVXLdkqUp11+JVJ+qVqhdUYfoUDTIoFQ89OlKUSmXzwq5yyralxmMwC57B/9IH9YnZp1xhLVD8EZ9hmlmZL+WHrSndXItLcAInE2MGHX32sd/zTndCPBhdXIs88CBKcf4CA/j8SHkN4tkdaIxEPLzyAbh/7V+ddrIUF4PiguS6+jTapTkuwCOXLHsqn8MpgphzIEoXG+QK2w4daCoPjAyuSnZ4cJx+d9YXLj1ocq2n62G4DFrNFaezPiMLzV4Ub1pSnoyrDc7mcshZnKTzJTkmFvzgjGGjMFsQ+wz3yzaVRLgrL/ZsnCrcC9JNIOZQCxFZoWVa6T6rcbABKEpS8BXqxElkMXQGPlKjkjTZcv+mPQFclLyurOl6p/2+QiexSbqSJISzovexgmctOu/CTD+cnR3t7qLLvKMhQOBPdimVmXDsKdMV0K9jZDYEZuBJuHlFj3rNj3r2VButCiAdUy8dz5nC3d0ygIzTk4y+tag6BhtstNH1kGCamUvUIVLLw3Pe4gF0Jzx3+LoOyl4GoJz3duquWbzxLbeAzGwiMYGrQ7UgjgkEfvpXGpwTg7LhGaKwjNdfhiywpia48lc9wShoYKxjmAEDD9qcdoPjrOeJfBjXHbDBKGQfhfb8BctR69oPn3mmnm3PsLGle+NC66lY1lEf7R/4OVr6On8y3YY+nMevgemp95epyUK48xbwGKITI6U264gUktrSSOPx6zqQn/exsJbHx3PNWqjGyW9ptupjXcRPLjJ5BtacX3wWaCb01YN8A8xtUA9qJGI4T/VNHgdcKhxoZoXLGi9IUTjLo/QI1TN4Aap24ANU7dAGoc2yBQmqhuK5p1Jgau9SNtS24lsRlA9C252IhVrFOdCYCRYHalv6l3ATVO3QBqHFsXoPpJImkdD2XqlIeZAitrTxcChy214tgMoGmR2AQcUpVmdQ4K0bclesSerjXILgYqk1XvAmqcugHUOHUDqHHqBlDj1A2gxrHNAob/1xeG8HqzCDEhfAXq2NFf24nVl8hLE1LK4eMOt7j2iYpk2So5fcGnm5zS60wchj4u0e0zfhFqkArXViar3gXUOHUDqHHqBlDj1A2gxqkbQI1TN4Aap+rpXiqdZSiWf+Q1FPQSCjnES3Uho2eJDubLCAY8hBvLPzOtGxaRaP6cOBjQCDcGypaRNS36B/Jl+H0azU3lyzAtSV9/fuAor1eltTlYtgwpoacvnpfm8Si0tTSULaNSqjKAR55azyNPrGMoGiP/6Kxg7tx27rv5CkSJo3BPvfgu9z3yN4YGBvOOVQtg2vRWHrzt83i04g3Uile2cPsDq4j0Rm1HsydNCrP89s8TCBQPIvDqmg5uuftV+nv7sQrOqDc3h7j/1itobSpeies2dPKz219md1cflpV/QDAU8nPXzz/LjKlNRWVsfL+Xn966ks6dvZhm/rHqQMDHLTdcwoJ5k4vKqIaKu4CBaJLfPrMe1ePB6yu8uZJt23p57sXiR7uSaYMHf/smiqLaZEigqyvCw4+vKyrDNCX3PLIWKRV8AXuL0d8f487lq0uW595H1pK1JP6AvZIHB4f55d2vlJTxq0ffIK2b+IN2GcPDaW6+4y8lZSx/4g2Gkwb+BruMVCrDz8uQUQ0VG8BgLL3PK1VRnB/zXd3RojLi8fS+p01RnA+7d/cW90xNZQwymZxbjFCci9FTQgbA4N5uzKUshV1DMRmKix6FXZQT0VimqIyhWLKkjGqoDwJrnLoB1Dh1A6hxKj9Jou3vs91OqJQaeefLcBbi8xefoHhUZf9Mw0WG31t6kqN5crq4TVq8XpeAPA4y3GIoe8rQY/+Mx1mGppbWoxoqNoAZUxuZNb0JaVkYhaE9AFXTOOe0I4rKaGsJsmDeJKSUjjIUReH8s4uHz/L5NJYsmo4EjIxdhhCCCz51dPHCACd+bCYSyDgEKRLA+eccVZYMgEzGyStb8OkzjiwpY+lxswDQnYIlAWeeuqCkjGqwGX5fIvsn4MxiP0qkdJY/tpYPO/N9k4MBH5+96GPMndNWMuN0Osuvn1zHth35kcMDfi+XnruYI+ZPKSnDMEwefeptNm3uykv3ejTO/+RRHHt0ae/2rGnxu+fX89aG/IhfmqbyqTMW7auYYlhS8swfN7LmjR156aqmcuYp8/n7k+aVlCElvPiXzby8anNeuqIqnPzxeXzytP0GEIk4+gMQapD/eOg07wMlMxtBVQZQZ3wZTQOoDwJrnLoB1Dh1A6hx6gZQ49QNoMapG0CNUzeAGqcqh5Cn//gev3p0DQP9+du+QhEcvfAQfnlD6VflrnhlC3c9+Bo9uyOMXP4UQjBv7hTuuukfUF22aPfy6poObrv/r3Tt6rPJOGRGG/f+4rP4PMWXUN/d3MvP7niZbVs7c6Hh98pAMH1aC/f+4rME/J6S5dnL7oRka1TSPQw9CYvdCYimLCIJk0jCJK1bJHULAYR8gqkhlZnNCsfO0PjUYR7CvoMbVLpiA4gOpXjgt28gFRWPz4ORMfZ9Jy3J+nd28sLK9/NWrgpJp7Pc+dAaspbA6/Oij1hClVKyZetufvP7N7ji4uNcZViW5D8fWE1at/AF/GRSqTwZO3f1c/fy17j6i6cULc+tv1pNdCiNL+AnnRghA0lnd4Rf3vMK37z6dNffmxa80y9Z223x3oBkMO20li8I+jWCe/Y3JJBMW0QTBpv7s6zvtnjuPfjxn6E9pHLcTA9XLvFxRPvYrP+PpGIDiAymsPZsvqiKioFhu2ZHRz/gbgBD8RRZM+c6pWgqToFNPtw1WFSPZNogmc7lrbi8ebqrq7gMgO6enNOIm2PKzk5nGf1JyYoOi9WdkmG9srh6AmjwKzT4fRzS5mM4bdEzmCESz9IbN/nDuyYvvJtmaljlwkV+vny8z/Xl2gfKuJ8BFGMYk3AsRHcnJM9vsVjTZTFaLy0J+RVCUwPMnCTpiuj0xnSkhO6YyX++luChN1NcssjPNSf68Y1yozDuBvBRQTfhhW0Wz281yVqlr68GryaYM9nHlBYPH/ZlGEzkXN6G0xYPrEvy1LsZrj81yInto1dtdQMog3f6JA9sMIk69u+jT8CjsGB6gP64wY6+NHudhAdTJte/EGfRFA8/OKmBsOfAB4wV9ywjXbXdHEJ8vuKj5jyHEJeG2lfCEUPLc550luEtMQOAEg4fikJ29gJuWZs9aJU/kkmNHo6ZFaIxkK/jxh6D//l8jLW9bm/lKp+KDWD65EamtDcipSRrODiEqApnLSv+PrfW5iCzZjTnnDl0+yBSKIJPnl7cicLv11g4fzIgnR1CgE+fsbCoDICTjstFVzUKnDlUn49DLrgQY9Z899i8BwGvJjhyRoBJ4fyHajhj8Z2X4/z6/YpDA+ZRlT9AdCjFfQ+/zo4P8x1CAgEPV1z8MZYcNaNkxrFEhl89soYPtuY7hPh9Gpect6QsR4xk2uCh36zlnU3deeler8p55xzFsjIcMbKmxW9+/yar13bsS5NeH/pRS7EawkV+WZoGj2BqA8wJC9p9ggYNDAt0SzKQhu1xyfaYxCxzTNEZ0dk1kF/hAjhvfoBrlvjrDiGjwUBKcuNqkwGHV8CVQlNg8WSFo9sFC1oF7Q0jbq8EXYeMDpk0ZLM5+QLQFehMSv6ry2LbUPF8nYwA4My5fn54qr9iA6gPAkcwrEtuXlN55bcFBGcfqrB0hqDBbWAmwOvLfRobcy+ZTCYk6TR4LJjjF1w5V8UUsDYiee5DE8uhZZjR6kVKSWckv9tbsS3NkMGXgHoLUA2GCTe+nmX7YPmVH/IKLl6gcPIMpeqFGjMriQ9DuuDVslKBl3st/rTTuX/YsjvFQDw/YLAQ0B7y/fv6a5q+X27+dQPYwwMbTF5xudlOnDxD4fKFivsTXyEZHWKDkoJzoaSQ3L1J0pvK182Sknd3Jklk8tNVFTmlUTv1jataSx9qpL4bCMDabqvsyvdp8E+LVb64WB21ygfweaGtXeArOF0fQHDtQoVPTMuvKkUIDpsWsG2YmSYimrT+sOw2GSon35o3gKFMbpGnHBo8gm+coHHijLG5bYqA5lZBsCG/UqUF50xTuPSw/PUAv0dhZpv9EE5Ktxr6zOizZeV5APr+t+A371mkHGLvFxL2Ca4/SWVeS3VP/V9Wb+dffvA8N931KomUy6vSyfXJ4TCECowACUsaBZ+bn19lU5q9hAL2xaxIwjz1uNsGzy6lV00bwHsDkjVdpZv+gAbXnqAyrbBSyiQWT3Prfa+xrSPCK6/v4HfPl341biiMrSUAOLJB4YI5+RU+q80elUVKyZCeXV4qn6qmgSte2cK9D7/O7q6BvGGkIhQ+ftxsbvjueSVl/PVvHdz54Cp27ezLW8hVhMJRC2dwy48vKilj3YZObrtvFdu35y8ECSE4fO4Ubr/xMlTVvdKe2ly66RfAl5ZozA5X39/3R5L7tr8BugvCwLjR2AhZA9vLtU9oFewcFrzRn7tzjQGV1pBGZDi/KRtOWe3H3j74lTevar7DLY+KW4CheJo7HnqdtC5RVQ3LtPZ9stksq17fykurthaVoesmt9y7injSRNXsMt5a38ETz64vKsOSklvuXkU0lsHj9ebJMLMmmzZ3cd/D7hFCNkUkW6Klp3xnzVVZPHl8Xv0uBDS3CGwvg5Nw8WyV5hHd//QW59hM8XT2B8XyqNgA+iNJzD0b4YpLDJ9NH/QUlREdSmIY5h4Zzo3Qlm19jul7SaYM4ok9UTVcTs7u2On+/pQ/bCn99E9uEFx0+Pj2kooCTU6tjwVXHrH/3jX4FcIOY4HhtNW+5M74Za7yD0Q51+eigt0TN4eQ0dh/sVyERNOS9wZK53DFQpUyNhTHHH8gt4JYSJsKx07aXwuTm5yP5Wcy2W+5ya7JQeCqTsvVOPYyr0VwVPv4NP1ONDbadZHAubP2W2hLg+roSBtPZhcfd6d0DHVWkwZQzsj/vMMmwKM/Ao8HvA4PuE/C4km5vxVF0NJg1ztrScU0h77uJLdiAyjlqg2lI2IoZThzeDzFVRuph3DpcjwO7XcsI+kqMQhvCwoWTaCnfy9O00KAM6fvv9/NDc7OOLohL3RKryJCSJi2lqCrM4ciBKeV2Idvaw0ybUoYkBiGg0OIEJzxieJOJQG/h8Pm5N5v6SQDBKefYpfx3oCbD9J+Tp6huI9vxhG/zzmaXasG/j22Xug9tJdU1nQMuWJ7VLOWbNOKPOUej8qPvnkWdy9fzfaOgqVJn4fPXPQx5s6Z5Pp7yBnJD//vmdyzfDXvb8lXwevTuPiTx5TlVPLdr5/OfQ//jQ3v5kf38GgqnzrzCEeHkM2R0oO/JVMmYvUDAnw+SKXzk6WEE6cqrOy08GoCn0chY+R3c+mMFTzp1ujsVVe3dIxMtxuALqZpJUL1Tp3cyPe+cVaVpcjR1hLkumvcD1yUQ1Ojn3/+8icq+k3ncHEDaPAIZjoMuCYKHgcDAFjUIljZmfs76FVtBiCBpCrOBu4emW7rAswsYxOScoKwe7j493ObKRnnuFKEImgKplk8p4e5U6KoB3AYwmkgCNA+4kiZ3+tcACsr/64wzdYC6BnZ1xASc6tVcCKTMEqf4pnWOLoTIyEzLGy4l6e/9UcUJZd3LLMKqbdgeEtHMStEVQVCSNtSizbif7/XuQxZKW3jANuVGZ24Q+S2/xYMl1GuyeVHiC+LxsEf0aC/sK/yAcK+PsLR69CMLRXLEwIUh/0NKdm3NOxxGcOZUjYXpjnO12IxSVubGPWmcLzJlLHt7zKLqgqPvgFv5jXH74TU2f7GjXx7ubPzlc+ncdrJ8/jcRYtt3ylC4lSUFr/CoG7hEm8aJLbFIMdLswYMDdmbmY866TL2/X3a6Fm9xyi+obVg6k6Gk7rjZyCa5PFnN7B5m30/w+3BDHlzAz/VxQJMKW3De9cOL52CaMTuo1bn4DLWrXDRJTtdh/4+SSAo8PvB4y2yAfQRoET4YQAyWcloldLwLCn6/fvdMwkFnYf1Pp/GGaccxuGH2qOuurXMw7oCWJhO/uSAKoRtAmm/JYLUyKUyKSGZkCQTudsi1NxK3UeRhMP82XaN06JilRjeRej+k/Gm/2r7Tgofhx5/PQ8trXzCZUmB0xJ6NJ2reJf6B2Gf4tsNQIout/V5CUhz718fPfxl6N2bKnlJRcSbvk2Dcjv+1At7bx6mOovhpm+Q1SqvfCnBcghMIAQM7pnlGC5bnZoQtle5OBgAryL4csWafQQIaIKgJkhm3Q2hO24xmpukUvgYDv8zidA/oWU7sJQwpjaLarsZ03TuArIjxKV11y7A5oxoK6n0qs8BJdbLPrq0l1jm3jZYkT9L2UgljOE9GlObzYGMMXSXhazezP70tNtil2rZfORsBnDMbBFF8LNqFZzoTClhAAlDsjM+cbs4t0W6jSP8G5MOCx4CCFnKnwrTHdu6TFT7CfBSVRpOcOaESj99b/ZMUAOQuZPFhQgBq3fnmn09K8k4xLDx+5Rk4U4guBjA8ccLQzO0S4GxeVndODKvUZRsgFftsibkMDeTce6eIiak9zz0saTzalfAq77jlO462jnySDGQGdTOEnAdUDre2keEBk0wJVB8O24gJXmnb+KZQCLprNOKzv2VPuhiAF5V/t4pvejSyPHHCwO4cW2XvNWbMM9SkCdKIacLIcp/ue8EpN1H0+4URY9NPfuBydGjGI3rQNF1HN8SkhGSt/tzf1uWZDBh7/81RViDgZafO8ktq4THTxdJ4Kk9n4885z6WnKEK0QG4en5uHZSs75UcM06HQgoZdhiYCgFPf7i/wqNJE9NhDSAUUN/e9EX7KiDUqFfws5cHOwHbiLiQX2800SfAXkg65Tz67zP2P/0APYPOUwSvpvzETXZNGgCAgP8odc1ASvJkGecHxxLLym3PFyIUuH/Tft0SaYt4yq5rKKD0rv9q8+Nu8mvWAH5/WeAlCa+Wuu7P2y3e7Bmj0KAlkBIGo9K2ti8EPNaRZWjEvkVn1DlcXINf+ddiedSsAQCgUPTmQG7X4+63TLaWcZB0tInH7E2/AFZH85v+eMokOmwf/YcCSu/b/6f1zmJ51LQBPH1JYKWER0pdp5tw6zqT7hIexaNJPAZJh2nfxoTFM9v3N/US6Oi3j++EEDR5tS+UyqemDQBAU6x/AYZKXRfXJT99zSzrSPmBIIFYDBKJgnwErBuSPLw5vz/oGdRJpO1dVGtQW7nuq80vlsqv5g3gyUsauoWQ/7ucaxOG5KY1WVbtGpsxgbRgMCJJFlS+UOD5Lovfbcsf5KUMi5399pF/wCcS7Vrz+eXkOTEmuROA8x9P3SkkZRkCwNLpCp9ZqBBy8cGvFD0Dg0MSq9wwcZZk464kSYcwcVND2t+v+2pryQEu1COF7sNn+b+ui/RiwHZ4wonVXRbv9EkunK9wykwFl1gZJTGzkngc0oXHvRR4qcfizy6tzdaetK3yhYBJId+/rftqU1mVD/UWII+Lnoy1WZbnFSSl3/c+gtaA4Ow5gqWHKITKjB2o65DaEyp2ZIOfVWBNv8ULHRZuHc3O/gxdUXvT3x723L/h6pYrK9G9bgAFnPdYapYieBmYXelvNQWOahcc3a5wRJtgyojj3FKCYeR29DIpyO5x6xICdGBnUvJfXZIdseLjC7dg0W0h7bmNX2s9t1Kd6wbgwMVPJKaZlvo8yOJuvSUIajAlJDi0UTDZn9uJNCzIZCGiS7bGJDvi9oUeN3YNZGxBogUwKex9eMPVzZ+rRse6AbjwP3492KJ5fU8Cy8ZbFyklW3vStuDQioD2Ju0/3r6q9fpqZdcNoAiXPSZVQ6S/J+F7jNOUOWNYbOlJM1ywzu/3KJlJjd5/WPuV8AHt0NYNoAwueDx9Dsi7kcw8mPn2xQw6+jJ5W7wCaAppGxt82rJ1Xw73u/+6POoGUCbnPSODajr9TQnXA85RGUeJlG7S0a8zlMhv8gNekWoKKl9766q2e0Yrr7oBVMi5j6cPV5HfRvI5YBTPEuea+66oQd+eF0fuxe8RmXBQvd9sb7l24+ViVA/v1w2gSi58JDVHauJrIK8AphyIrHjKpGdQJ5LI7qt4AYQC2kCDj/ube1u+9dL3RRlnmyunbgAHyLKVUmsayJyNlJcCZwAlX3cmJSQyFtFhg4Hh7L54PkJA0KtGAz7xV6+ifP+Nq5rXjbH6dQMYbc5/LH0YijxZSHEkMB/k/JRutaQMK5xImaGkbpopXQLC0lQSmkK3R1G2qB5lZdDDA699qSlSKo/R5P8DRKRzelCxpF4AAAAASUVORK5CYII=" alt="">
+&nbsp;
+<span style="font-family: Open Sans,Arial;font-weight:bold;">Course Schedule Planner</span>
+&nbsp;
+&nbsp;
+
+<!-- Book Logo -->
+<img style="width:40px;position:fixed; right:25px;top:15px;cursor: pointer;" onclick="courses()" src="data:image/png;base64,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"/>
+
+
+<!-- Inputs Begin -->
+<div id="overlay" "class="modal" onclick="off()"></div>
+<div id="inputs" class="box" style="position:fixed">
+<style>
+
+.box {
+  margin: 90px auto;
+  background: #FFF9C4;
+  padding: 40px;
+  text-align: right;
+  font-weight: 900;
+  color: #fff;
+  font-family: arial;
+  position: relative;
+}
+
+#inputs table{ width:300px;}
+#inputs input[type="text"]{ width:140px;}
+#inputs input[type="number"]{ width:40px;}
+
+#inputs{padding:20px; position:absolute;right:35px;top:-8px; display:block; opacity: 0.9;z-index:999999;}
+
+#gen{  display: block;  text-align: center; margin-top:5px;}
+
+#overlay {
+    position: fixed;
+    display:block;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /*background-color: rgba(0,0,0,0.5);cursor: pointer;*/
+    z-index: 2; 
+}
+</style>
+
+<script>
+// Show Courses Modal
+function courses() {
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("inputs").style.display = "block";
+}
+
+// Hide Courses Modal
+function off() {
+    document.getElementById("overlay").style.display = "none";
+    document.getElementById("inputs").style.display = "none";
+}
+</script>
+
+<table>
+
+<tr>
+<td colspan="1" style="color:black;font-size:12px; text-align: left; font-weight: 700;">
+<a href="#" style="text-decoration: none;font-family:sans-serif;font-weight:bold;color:#3F51B5;font-size:14px;"
+ onclick="window.open('Planner_Tutorial.pdf', '_system', 'location=yes');"
+>Click Here for User Guide </a> </td>
+<td colspan="2" style="color:black;font-size:12px; text-align: right; font-weight: 700;">
+<a href="#" style="text-decoration: none;font-family:sans-serif;font-weight:bold;color:#3F51B5;font-size:14px;"
+onclick="window.open('Planner_Tutorial.pdf', '_system', 'location=yes');">اضغظ هنا للاطلاع على دليل المستخدم</a> </td>
+</tr>
+
+<tr>
+<td colspan="2" style="color:black;font-size:12px; text-align: left; font-weight: 700;"> Please Enter The Required Courses. And, If Neccessary, A Comma Seperated List of Sections</td>
+</tr>
+
+<tr>
+<td><input type="text" placeholder="Example: ITCS101" id="c1"  value=""></td>
+<td><input type="text" placeholder="Example: 01,03,10" id="s1"  value=""></td>
+</tr>
+
+<tr>
+<td><input type="text" placeholder="Example: ITCS101" id="c2" value=""></td>
+<td><input type="text" placeholder="Example: 01,03,10" id="s2" value=""></td>
+</tr>
+
+<tr>
+<td><input type="text" placeholder="Example: ITCS101" id="c3" value=""></td>
+<td><input type="text" placeholder="Example: 01,03,10" id="s3" value=""></td>
+</tr>
+
+
+<tr>
+<td><input type="text" placeholder="Example: ITCS101" id="c4"  value=""></td>
+<td><input type="text" placeholder="Example: 01,03,10" id="s4"  value=""></td>
+</tr>
+
+
+<tr>
+<td><input type="text" placeholder="Example: ITCS101" id="c5"  value=""></td>
+<td><input type="text" placeholder="Example: 01,03,10" id="s5"  value=""></td>
+</tr>
+
+<tr>
+<td><input type="text" placeholder="Example: ITCS101" id="c6"  value=""></td>
+<td><input type="text" placeholder="Example: 01,03,10" id="s6"  value=""></td>
+</tr>
+
+
+<tr>
+<td><input type="text" placeholder="Example: ITCS101" id="c7"  value=""></td>
+<td><input type="text" placeholder="Example: 01,03,10" id="s7"  value=""></td>
+</tr>
+
+<tr>
+<td colspan="2" style="color:black;font-size:12px; text-align: left; font-weight: 700;"> 
+Start After: &nbsp;&nbsp;&nbsp;&nbsp; <input type="number" id="start_var" min="1" max="24" value="7">
+on Days: &nbsp;<br/> 
+<input type="checkbox" name="st[]" value="3"> Sun <input type="checkbox" name="st[]" value="4"> Mon <input type="checkbox" name="st[]" value="5"> Tue
+<input type="checkbox" name="st[]" value="6"> Wed <input type="checkbox" name="st[]" value="7"> Thu 
+</td>
+</tr>
+<tr></tr>
+<tr>
+<td colspan="2" style="color:black;font-size:12px; text-align: left; font-weight: 700;">
+Finish Before:  <input type="number" id="finish_var" min="1" max="24" value="20">
+on Days: &nbsp;<br/>
+<input type="checkbox" name="fn[]" value="3"> Sun <input type="checkbox" name="fn[]" value="4"> Mon <input type="checkbox" name="fn[]" value="5"> Tue
+<input type="checkbox" name="fn[]" value="6"> Wed <input type="checkbox" name="fn[]" value="7"> Thu 
+</td>
+</tr>
+
+
+
+
+<tr><td colspan="2"> <a href="#" id="gen" class="myButton" ng-click="Gen()">Generate</a> </td></tr>
+
+<!-- <tr>
+<td colspan="2" style="color:#B71C1C;font-size:13px; text-align: justify; font-weight: 700;"> 
+Important Note: All sections will be displayed regardless if they have vacancies
+<span style="font-size:14px;">
+ملحوظة هامة: جميع الشعب سوف تظهر بغض النظر عن وجود شاغر فيها
+<span></td>
+</tr> -->
+
+
+</table>
+</div>
+<!-- Inputs End -->
+
+</div>
+<!-- Header End -->
+
+<!-- Loading Animation Begin -->
+<div class="spinner" ng-show="ld">
+  <div class="rect1"></div>
+  <div class="rect2"></div>
+  <div class="rect3"></div>
+  <div class="rect4"></div>
+  <div class="rect5"></div>
+</div>
+
+<style>
+.spinner { 
+  position:fixed;
+  top:20px;right:75px;
+  width: 50px;
+  height: 40px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.spinner > div {
+  background-color: #9c27b0;
+  height: 100%;
+  width: 6px;
+  display: inline-block;
+  
+  -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+
+.spinner .rect2 { -webkit-animation-delay: -1.1s; animation-delay: -1.1s; }
+.spinner .rect3 { -webkit-animation-delay: -1.0s; animation-delay: -1.0s; }
+.spinner .rect4 { -webkit-animation-delay: -0.9s; animation-delay: -0.9s; }
+.spinner .rect5 { -webkit-animation-delay: -0.8s; animation-delay: -0.8s; }
+
+@-webkit-keyframes sk-stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }  
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes sk-stretchdelay {
+  0%, 40%, 100% { 
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% { 
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
+}
+</style>
+
+<!-- Loading Error -->
+<div ng-show="er"> <span style="font-family: Open Sans,Arial;font-weight:bold;position:relative;bottom:0px">Operation Terminated .. !</span> </div>
+<!-- Loading Animation End -->
+
+<!-- Main Content Begin -->
+<style type="text/css">
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 10px;
+}
+.grid-item {  padding: 10px;/*20*/; }
+
+.num,.sct,.exm{color:black}
+
+@media only screen and (max-width: 1350px) { /* For mobile phones: */ .grid-container { grid-template-columns: auto auto; } }
+@media only screen and (max-width: 900px)  { /* For mobile phones: */ .grid-container { grid-template-columns: auto; } }
+</style>
+
+<div id="infinite-list">	
+	<div class="grid-container">
+	<span ng-repeat="x in sections">
+	<div id="shedule" class="grid-item" style="width:430px;margin: auto;margin-top:10px;margin-top:50px;">	
+
+	<div style="position:relative;">
+	<span style="font-family: Open Sans,Arial;font-weight:bold;position:absolute;font-size:44px;left: -5px;top:-50px;z-index:-1;" class="num">{{$index+1}}</span>
+	</div>
+
+	<span ng-repeat="i in x track by $index">
+	<p style="width:10px;height:10px;background-color:{{colors[$index]}};float:left;margin-top:5px;border-radius: 2px;"></p>&nbsp;
+	<span style="font-family: Open Sans,Arial;font-weight:bold;" class="sct" title="{{infor[$index][i].i}}">{{infor[$index][i].c}} {{infor[$index][i].s}} {{infor[$index][i].i.substr(0,25)}}</span>
+	<br> &nbsp; 
+	<span style="font-family: Open Sans,Arial;" class="exm">- Exam: {{infor[$index][i].e}}	
+	</span>  <br/>
+	</span>	
+	
+	<br/>
+
+	<!-- Days-->
+	<svg width="400" height="15">
+  <g ng-repeat="i in ['Sun','Mon','Tue','Wed','Thu']" >
+  <!-- <g ng-repeat="i in ['U','M','T','W','H']" > -->
+	<!-- <g ng-repeat="i in ['S','U','M','T','W','H']" > -->
+	<text ng-attr-x="{{55*($index+1)+10}}" y="12" style="font-family: Open Sans,Arial;font-weight:bold;" fill="#34495e">{{i}}</text>
+	</g>
+
+  <g >
+    <text ng-attr-x="{{55*(6)+10}}" y="12" style="font-family: Open Sans,Arial;font-weight:bold;" fill="#34495e">Sat</text>
+  </g>
+	</svg>
+	<!-- Days End-->
+	
+	<br/>
+
+	<svg width="400" height="370">
+	<!-- Hours -->	
+	<g ng-repeat="i in [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17]" >
+	<line x1="0" ng-attr-y1="{{(i)*20}}" x2="400" ng-attr-y2="{{(i)*20}}" style="stroke:#34495e;stroke-width:0.25" />
+	<text x="0px" ng-attr-y="{{(i+1)*20 - 5}}px" fill="#34495e" style="font-family:impact,fantasy;">{{i+7}}:00</text>
+	</g>
+	<!-- Hours End -->
+		
+	<!-- Timing Box -->
+	<g ng-repeat="i in x track by $index">
+	<g ng-repeat="y in timings[$index][i]">
+	<rect ng-attr-x="{{55*(y.d-2)}}" ng-attr-y="{{(y.f-7)*20}}" width="50" ng-attr-height="{{(y.t-y.f)*20}}"  rx="3" ry="3" ng-attr-style="fill:{{colors[$parent.$index]}}" > 
+	<title>Room:{{y.i}}</title> </rect>
+    <text  ng-attr-x="{{(55*(y.d-2)) + 3}}" ng-attr-y="{{((y.f-7)*20) + 9}}" font-family="Verdana" font-weight="bold" font-size="8" fill="white"> {{y.c}} </text>
+	</g></g>
+
+	<!-- Timing Box End -->
+    </svg>
+   
+	</div>
+	</span>	
+	</div>
+
+</div>
+<!-- Main Content End -->
+
+<!-- Finished Loading Begin -->	
+<style>
+.footer 
+{
+	position: relative;
+	left: 0;
+	background-color: #3F51B5;
+	color: #f6f6f6;
+	text-align: center;
+	width: 98%;
+	margin: auto;
+	border-radius: 4px;
+	bottom: 7px;
+	padding: 4px;
+}
+</style>
+<div ng-show="dne" class="footer">  
+<span style="font-family: Open Sans,Arial;font-weight:bold;">{{dnemsg}}</span> 
+<ion-spinner icon="lines" style="float:right"></ion-spinner>
+
+<!-- Star Rating Div -->
+<div class="rw-ui-container" style="float:right"></div>
+</div>
+<!-- Finished Loading End -->
+	
+</div>
+<!-- Application End -->
+
+<script>
+var ai,bi,ci,di,ei,fi,gi;
+var rqs_copy , json_copy , json;
+
+var app = angular.module('myApp', []);
+app.controller('DashCtrl', function($scope, $http) {
+
+//Hide load and error divs
+$scope.ld = 0;
+$scope.er = 0;
+									  
+//Gen button click
+$scope.Gen = function(){
+
+$scope.dne = 0;//Hide done footer
+$scope.ld = 1;//Show loading
+$scope.er = 0;//Hide error div
+
+//Set timings box colors
+$scope.colors = ["#3498db","#1abc9c","#f1c40f","#9b59b6","#e67e22","#e74c3c","#34495e"];
+
+
+var c1 = document.getElementById("c1").value.toUpperCase().trim();
+var c2 = document.getElementById("c2").value.toUpperCase().trim();
+var c3 = document.getElementById("c3").value.toUpperCase().trim();
+var c4 = document.getElementById("c4").value.toUpperCase().trim();
+var c5 = document.getElementById("c5").value.toUpperCase().trim();
+var c6 = document.getElementById("c6").value.toUpperCase().trim();
+var c7 = document.getElementById("c7").value.toUpperCase().trim();
+var s1 = document.getElementById("s1").value.trim();
+var s2 = document.getElementById("s2").value.trim();
+var s3 = document.getElementById("s3").value.trim();
+var s4 = document.getElementById("s4").value.trim();
+var s5 = document.getElementById("s5").value.trim();
+var s6 = document.getElementById("s6").value.trim();
+var s7 = document.getElementById("s7").value.trim();
+
+var url = "?";
+var eliminate = [];
+if(c1){s1?eliminate.push({c:c1 , s: s1.split(",")}):null;}
+if(c2){s2?eliminate.push({c:c2 , s: s2.split(",")}):null;}
+if(c3){s3?eliminate.push({c:c3 , s: s3.split(",")}):null;}
+if(c4){s4?eliminate.push({c:c4 , s: s4.split(",")}):null;}
+if(c5){s5?eliminate.push({c:c5 , s: s5.split(",")}):null;}
+if(c6){s6?eliminate.push({c:c6 , s: s6.split(",")}):null;}
+if(c7){s7?eliminate.push({c:c7 , s: s7.split(",")}):null;}
+url = "p1="+c1+"&p2="+c2+"&p3="+c3+"&p4="+c4+"&p5="+c5+"&p6="+c6+"&p7="+c7;
+//console.log(url);
+//console.log(eliminate);
+
+if( rqs_copy == c1+c2+c3+c4+c5+c6+c7 ){ json = JSON.parse(JSON.stringify(json_copy)); go(); } //If same courses do not call server
+else {
+// $http.get("example.com/GetScheduleInfo?"+url) .success(function(json_resp) {
+$http.get("courses.json") .success(function(json_resp) {
+json = json_resp; json_copy = JSON.parse(JSON.stringify(json)); // console.log(json);
+rqs_copy = c1+c2+c3+c4+c5+c6+c7;  go();
+});
+
+}
+
+//Preprocess request function: inside Gen function 
+function go(){
+
+//json= overide_json_here; 
+//json_copy = JSON.parse(JSON.stringify(json));
+
+$scope.still = true;$scope.dne = false;loadM();
+ai=0,bi=0,ci=0,di=0,ei=0,fi=0,gi=0;
+
+// Exclude unspecified sections
+for (e in eliminate) {
+for (x in json[0]) {  if(json[0][x][0].c !== eliminate[e].c) {continue;}
+
+for(var y = json[0][x].length; y--;) {
+var fnd =false; 
+for(es in eliminate[e].s){ if(json[0][x][y].s === eliminate[e].s[es]){fnd=true;break;} } 
+if(!fnd){json[0][x].splice(y, 1);json[1][x].splice(y, 1);}
+}}}
+
+// Finish before
+var st_i = [];
+var x = document.getElementsByName("fn[]");
+for (i in x){if(x[i].checked)st_i.push(x[i].value);}
+
+var finish_var = document.getElementById("finish_var").value;
+if (st_i.length > 0) {   for (x in json[1]) {  jst: for(var y = json[1][x].length; y--;) {  for (z in json[1][x][y]) {
+for (i in st_i) { if( json[1][x][y][z].d == st_i[i] && json[1][x][y][z].t > finish_var ){ json[0][x].splice(y, 1);json[1][x].splice(y, 1); continue jst; } }
+} } } }
+
+
+// Start after
+var st_i = [];
+var x = document.getElementsByName("st[]");
+for (i in x){if(x[i].checked)st_i.push(x[i].value);}
+
+var start_var = document.getElementById("start_var").value;
+if (st_i.length > 0) {   for (x in json[1]) {  jst: for(var y = json[1][x].length; y--;) {  for (z in json[1][x][y]) {
+for (i in st_i) { if( json[1][x][y][z].d == st_i[i] && json[1][x][y][z].f < start_var ){ json[0][x].splice(y, 1);json[1][x].splice(y, 1); continue jst; } }
+} } } }
+
+
+//console.log(json[0]); // Display Json after processing	
+$scope.infor = json[0]; // init courses info array
+$scope.timings = json[1]; // init courses timings array
+$scope.sections = []; // declare generated sections array
+off();//Hide inputs box
+
+no_c = $scope.infor.length; // init #courses
+no_s = []; // init #sections
+for (z in $scope.infor){ no_s.push($scope.infor[z].length); }
+//console.log(no_c); console.log(no_s);
+
+//var combinations = 1; for (z in $scope.infor){ combinations *= no_s[z]; }
+//console.log("Total potential combinations: " + combinations); //return;
+  
+$scope.fun(true); //Generate schedules// No more problems
+
+	}// End of Go function
+	
+} // End of Gen function
+
+
+$scope.fun = function (frst){ 
+
+//$scope.ld = 1;//Show loading // not showing, not necess
+
+// previous combination loc
+
+var sec=[];
+var foundz = 0;
+//############################################
+
+switch(no_c) {
+
+case 7:
+var init_for=true;
+for(a=0;a<no_s[0];a++){
+j71: for(b=0;b<no_s[1];b++){  j72: for(c=0;c<no_s[2];c++){  j73: for(d=0;d<no_s[3];d++){  j74: for(e=0;e<no_s[4];e++){  j75: for(f=0;f<no_s[5];f++){  j76: for(g=0;g<no_s[6];g++){
+if(init_for && !frst){ init_for=false; a=ai;b=bi;c=ci;d=di;e=ei;f=fi;g=gi; continue; } //skips 0000
+arr=[a,b,c,d,e,f,g];
+for(x=0;x<7;x++){  for(y=x+1;y<7;y++){
+if(comp(x,arr[x],y,arr[y])){ switch(y){case 1:continue j71;case 2:continue j72;case 3:continue j73;case 4:continue j74;case 5:continue j75;case 6:continue j76;}}  }}
+sec.push(arr);  foundz++; /*console.log(foundz);console.log([a,b,c,d]);*/if(foundz==9){ai=a;bi=b;ci=c;di=d,ei=e;fi=f;gi=g;rend(sec);return;}
+
+}}}}}}} break;
+
+case 6:
+var init_for=true;
+for(a=0;a<no_s[0];a++){
+j61: for(b=0;b<no_s[1];b++){  j62: for(c=0;c<no_s[2];c++){  j63: for(d=0;d<no_s[3];d++){  j64: for(e=0;e<no_s[4];e++){  j65: for(f=0;f<no_s[5];f++){ 
+if(init_for && !frst){ init_for=false; a=ai;b=bi;c=ci;d=di;e=ei;f=fi; continue; } //skips 0000 
+
+arr=[a,b,c,d,e,f];
+for(x=0;x<6;x++){  for(y=x+1;y<6;y++){
+if(comp(x,arr[x],y,arr[y])){ switch(y){case 1:continue j61;case 2:continue j62;case 3:continue j63;case 4:continue j64;case 5:continue j65;}}  }}
+sec.push(arr);  foundz++; /*console.log(foundz);console.log([a,b,c,d]);*/if(foundz==9){ai=a;bi=b;ci=c;di=d,ei=e;fi=f;rend(sec);return;}
+
+}}}}}} break;
+
+case 5:
+var init_for=true;
+for(a=ai;a<no_s[0];a++){
+j51: for(b=bi;b<no_s[1];b++){  j52: for(c=ci;c<no_s[2];c++){  j53: for(d=di;d<no_s[3];d++){  j54: for(e=ei;e<no_s[4];e++){
+if(init_for && !frst){ init_for=false; a=ai;b=bi;c=ci;d=di;e=ei; continue; } //skips 0000 
+
+arr=[a,b,c,d,e];
+for(x=0;x<5;x++){  for(y=x+1;y<5;y++){
+if(comp(x,arr[x],y,arr[y])){ switch(y){case 1:continue j51;case 2:continue j52;case 3:continue j53;case 4:continue j54;}}  }}
+sec.push(arr);  foundz++; /*console.log(foundz);console.log([a,b,c,d]);*/if(foundz==9){ai=a;bi=b;ci=c;di=d,ei=e;rend(sec);return;}
+
+}}}}} break;
+case 4:
+var init_for=true;
+for(var a=0;a<no_s[0];a++){ 
+j41: for(var b=0;b<no_s[1];b++){  j42: for(var c=0;c<no_s[2];c++){  j43: for(var d=0;d<no_s[3];d++){//console.log('d:'+d);
+if(init_for && !frst){ init_for=false; a=ai;b=bi;c=ci;d=di; continue; } //skips 0000
+
+arr=[a,b,c,d];
+for(x=0;x<4;x++){  for(y=x+1;y<4;y++){
+if(comp(x,arr[x],y,arr[y])){ switch(y){case 1:continue j41;case 2:continue j42;case 3:continue j43;}}  }}
+sec.push(arr); foundz++; /*console.log(foundz);console.log([a,b,c,d]);*/if(foundz==9){ai=a;bi=b;ci=c;di=d;rend(sec);return;}
+
+}}}} break;
+
+case 3:
+var init_for=true;
+for(a=0;a<no_s[0];a++){
+j31: for(b=0;b<no_s[1];b++){  j32: for(c=0;c<no_s[2];c++){
+if(init_for && !frst){ init_for=false; a=ai;b=bi;c=ci; continue; } //skips 0000 
+
+arr=[a,b,c];
+for(x=0;x<3;x++){  for(y=x+1;y<3;y++){
+if(comp(x,arr[x],y,arr[y])){ switch(y){case 1:continue j31;case 2:continue j32;}}  }}
+sec.push(arr);  foundz++; /*console.log(foundz);console.log([a,b,c,d]);*/if(foundz==9){ai=a;bi=b;ci=c;rend(sec);return;}
+
+}}} break;
+
+case 2:
+var init_for=true;
+for(a=0;a<no_s[0];a++){
+j21: for(b=0;b<no_s[1];b++){
+if(init_for && !frst){ init_for=false; a=ai;b=bi; continue; } //skips 0000 
+
+arr=[a,b];
+for(x=0;x<2;x++){  for(y=x+1;y<2;y++){
+if(comp(x,arr[x],y,arr[y])){ switch(y){case 1:continue j21;}}  }}
+sec.push(arr);  foundz++; /*console.log(foundz);console.log([a,b,c,d]);*/if(foundz==9){ai=a;bi=b;rend(sec);return;}
+
+}} break;
+
+case 1:var init_for=true;  for(a=0;a<no_s[0];a++){ if(init_for && !frst){ init_for=false; a=ai; continue; }    sec.push([a]);  foundz++; if(foundz==9){ai=a;rend(sec);return;} } break;
+
+}
+
+//############################################
+
+function comp(a1,a2,b1,b2){//console.log("comp called");
+for(a3 in $scope.timings[a1][a2]){ for(b3 in $scope.timings[b1][b2]){ aa = $scope.timings[a1][a2][a3]; bb = $scope.timings[b1][b2][b3];
+//console.log(JSON.stringify(aa)+'\n'+JSON.stringify(bb)); // Current Section Permutation Details
+//at least 48 min 0.8 - aprrox 50
+
+// If overlap (A From is inside B From/To) OR (A To is inside B From/To) OR (B fully inside A) OR (Different campus and Gap less than 48 minutes, Should Gap be 50??No, 50 is allowed), Then return true (True means clash)
+// Added and campus not Online != "O"
+// Equation can be substituted for a better equation
+if(aa.d==bb.d && ( (aa.f>=bb.f && aa.f<=bb.t)||(aa.t>=bb.f && aa.t<=bb.t)||(aa.f<=bb.f && aa.t>=bb.t)||(aa.c!==bb.c && aa.c!== "O" && bb.c!== "O" && (Math.abs(aa.t-bb.f)<0.8 || Math.abs(aa.f-bb.t)<0.8)) ))
+{//console.log('Clash: '+JSON.stringify(aa)+'\n'+JSON.stringify(bb)); // Clashed Section Permutation Details
+return true; }  }}
+return false; }
+
+//############################################
+
+$scope.still = false;//return;
+//console.log($scope.still);
+if(sec.length>0){}$scope.dne = true;//Display finished loading footer
+$scope.dnemsg = "Loading Results is Completed!"
+if(sec.length==0){$scope.dnemsg= "No Results Found! Please make sure you have properly entered the list of courses/sections or choose different courses/sections.";}
+
+rend(sec);
+
+}//End of function fun
+
+
+$scope.sections = []; // Twice?? also in go? should be in gen?
+
+function rend(rsec){ $scope.ld = 0;  
+$scope.sections=$scope.sections.concat(rsec);$scope.$apply();
+if($scope.still){loadM();} /*console.log($scope.sections);*/ }
+
+//More fun function 700, 200
+function loadM() {
+$(window).scroll(function() { if($(window).scrollTop() + $(window).height() > $(document).height() - 700) {/*console.log("Near bottom!");*/ $(window).unbind('scroll');$scope.fun(); } }); 
+} // loadM();
+
+});
+</script>
+
+<!-- Supporting libraries: jQuery, Appzi Feedback, Star Rating -->
+
+<script src="https://code.jquery.com/jquery-latest.min.js"></script> 
+
+</body>
+</html>
